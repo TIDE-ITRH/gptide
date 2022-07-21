@@ -15,7 +15,7 @@ class GPtideScipy(GPtide):
         ----------
         xd: numpy.ndarray [N, D]
             Input data locations
-        xo: numpy.ndarray [M, D]
+        xm: numpy.ndarray [M, D]
             Output/target point locations
         sd: float
             Data noise parameter
@@ -26,8 +26,16 @@ class GPtideScipy(GPtide):
 
         Other Parameters
         ----------------
+        P: int (default=1)
+            number of output dimensions
         cov_kwargs: dictionary, optional
             keyword arguments passed to `cov_func`
+        mean_func: callable function
+            Returns the mean function
+        mean_params: tuple
+            parameters passed to the mean function
+        mean_kwargs: dict
+            kwargs passed to the mean function
 
         """
         

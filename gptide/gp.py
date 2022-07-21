@@ -21,9 +21,6 @@ class GPtide(object):
     
     
     def __init__(self, xd, xm, sd, cov_func, cov_params, **kwargs):
-        """
-
-        """
         
         self.__dict__.update(kwargs)
         
@@ -66,6 +63,8 @@ class GPtide(object):
         raise NotImplementedError
         
     def update_xm(self, xm):
+        """Update the output locations and the covariance kernel"""
+
         self.M, _ = xm.shape
         self.xm = xm
         self.Kmd = self.cov_func(self.xm, self.xd.T, self.cov_params, **self.mean_kwargs) 
