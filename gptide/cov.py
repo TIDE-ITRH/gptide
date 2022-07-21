@@ -3,11 +3,9 @@ Covariance functions for optimal interpolation
 """
 
 import numpy as np
-from scipy.optimize import minimize
 from scipy.special import kv as K_nu
 from scipy.special import gamma
 
-from .transform import rotate_xy, rotate_3d
 
 ####
 # 1D Covariance models (these are used as building blocks for 2d/3d functions)
