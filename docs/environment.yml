@@ -1,0 +1,19 @@
+name: gptide_test_env
+dependencies:
+    - numpy
+    - scipy
+    - xarray
+    - pytest
+    - future
+    - sphinx
+    - ipython
+    - matplotlib
+    - numpydoc
+    - jupyter_client
+    - ipykernel
+    - pandoc
+    - pip
+    - pip:
+      - nbsphinx
+      - sphinx_rtd_theme
+
