@@ -123,6 +123,7 @@ class GPtideScipy(GPtide):
          
     def _calc_cov(self, cov_func, cov_params):
         """Compute the covariance functions"""
+        # Zulberti - private function shouldn't need these inputs or outputs
         Kmd = cov_func(self.xm, self.xd.T, cov_params, **self.cov_kwargs)
         Kdd = cov_func(self.xd, self.xd.T, cov_params, **self.cov_kwargs)
         
@@ -130,6 +131,7 @@ class GPtideScipy(GPtide):
     
     def _calc_weights(self, Kdd, sd, Kmd):
         """Calculate the cholesky factorization"""
+        # Zulberti - private function shouldn't need these inputs or outputs
         L = la.cholesky(Kdd+(sd**2+1e-7)*np.eye(self.N), lower=True)
         w_md = None
 
@@ -162,9 +164,11 @@ class GPtideScipy(GPtide):
 
         # Predict the covariance
         Σ = self._calc_err(diag=False)
+        Σ += 1e-7*np.eye(self.M)
+        Σ += (self.sd**2)*np.eye(self.M)
         
         myrand = np.random.normal(size=(self.M,samples))
-        L = la.cholesky(Σ+1e-7*np.eye(self.M), lower=True)
+        L = la.cholesky(Σ, lower=True)
         
         return ymu + L.dot(myrand)
         
