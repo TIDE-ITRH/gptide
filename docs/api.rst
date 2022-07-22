@@ -9,6 +9,12 @@ Main Class
     :inherited-members:
     :special-members: __call__, __init__
 
+Parent Class
+============
+
+.. automodule:: gptide.gptide
+    :members:
+    
 Covariance functions
 ====================
 
