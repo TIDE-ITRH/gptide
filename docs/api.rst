@@ -12,7 +12,7 @@ Main Class
 Parent Class
 ============
 
-.. automodule:: gptide.gptide
+.. automodule:: gptide.gp
     :members:
     
 Covariance functions
