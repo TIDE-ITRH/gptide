@@ -4,12 +4,12 @@ MCMC parameter estimation using emcee
 
 import numpy as np
 import emcee
-from .gpdask import GPtideDask
+from .gpscipy import GPtideScipy
 
 
     
 def _minfunc_prior( params, x, Z, covfunc, meanfunc, 
-           ncovparams, verbose, mean_kwargs, OIclass, oi_kwargs,
+           ncovparams, verbose, mean_kwargs, GPclass, gp_kwargs,
            priors):
     """
     This is the log_prob_fn in emcee speak. Takes a vector in the parameter space, and any additional arguments in the 
@@ -37,10 +37,10 @@ def _minfunc_prior( params, x, Z, covfunc, meanfunc,
     sum_prior = np.sum(log_prior)
     #sum_prior = 0.
     
-    myOI = OIclass(x, x, noise, covfunc, covparams, mean_func=meanfunc,
-                        mean_params=meanparams, mean_kwargs=mean_kwargs, **oi_kwargs)
+    myGP = GPclass(x, x, noise, covfunc, covparams, mean_func=meanfunc,
+                        mean_params=meanparams, mean_kwargs=mean_kwargs, **gp_kwargs)
     
-    logp = myOI.log_marg_likelihood(Z)  
+    logp = myGP.log_marg_likelihood(Z)  
     
     return logp + sum_prior             # Return the sume of the logs (log of the product)
 
@@ -52,11 +52,11 @@ def mcmc(
     priors,
     ncovparams,
     mean_kwargs={},
-    OIclass=GPtideDask,
+    GPclass=GPtideScipy
     verbose=False,
     nwalkers=200, nwarmup=200, niter=20, nprior=500,
-    oi_kwargs={},
-    parallel=True):
+    gp_kwargs={},
+    parallel=False):
     """
     Main MCMC function
     """
@@ -78,7 +78,7 @@ def mcmc(
                                 _minfunc_prior, 
                                 args=(xd, yd, covfunc, meanfunc, 
                                         ncovparams, verbose, mean_kwargs, 
-                                        OIclass, oi_kwargs,
+                                        GPclass, gp_kwargs,
                                         priors),
                                 pool=pool)
 
@@ -93,7 +93,7 @@ def mcmc(
                                 _minfunc_prior, 
                                 args=(xd, yd, covfunc, meanfunc, 
                                         ncovparams, verbose, mean_kwargs, 
-                                        OIclass, oi_kwargs,
+                                        GPclass, gp_kwargs,
                                         priors),
                                  )
 
