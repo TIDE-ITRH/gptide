@@ -12,6 +12,7 @@ dependencies:
     - jupyter_client
     - ipykernel
     - pandoc
+    - emcee
     - pip
     - pip:
       - nbsphinx
