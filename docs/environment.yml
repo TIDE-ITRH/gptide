@@ -12,9 +12,9 @@ dependencies:
     - jupyter_client
     - ipykernel
     - pandoc
-    - emcee
     - pip
     - pip:
       - nbsphinx
       - sphinx_rtd_theme
+      - emcee
 
