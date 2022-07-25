@@ -26,6 +26,8 @@ Inference
 
 .. automodule:: gptide.mcmc
     :members:
+
+    
 .. automodule:: gptide.mle
     :members:
 
