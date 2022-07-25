@@ -20,4 +20,14 @@ Covariance functions
 
 .. automodule:: gptide.cov
     :members:
+    
+Inference
+=========
+
+.. automodule:: gptide.mcmc
+    :members:
+.. automodule:: gptide.mle
+    :members:
+
+
 
