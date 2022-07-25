@@ -8,9 +8,17 @@ from .gpscipy import GPtideScipy
 
 
     
-def _minfunc_prior( params, x, Z, covfunc, meanfunc, 
-           ncovparams, verbose, mean_kwargs, GPclass, gp_kwargs,
-           priors):
+def _minfunc_prior( params, 
+                    x, 
+                    Z, 
+                    covfunc, 
+                    meanfunc, 
+                    ncovparams, 
+                    verbose, 
+                    mean_kwargs, 
+                    GPclass, 
+                    gp_kwargs,
+                    priors):
     """
     This is the log_prob_fn in emcee speak. Takes a vector in the parameter space, and any additional arguments in the 
     args kwarg of the emcee.EnsembleSampler
@@ -18,7 +26,7 @@ def _minfunc_prior( params, x, Z, covfunc, meanfunc,
     params:
         A sequence of parameters, 
             - The first is IID noise
-            - Then there are ncovparams parameters for the covfunc
+            - Then there are ncovparams-1 parameters for the covfunc
             - The rest are for the meanfunc 
 
     Zulberti - 02H p(data)?
@@ -26,7 +34,7 @@ def _minfunc_prior( params, x, Z, covfunc, meanfunc,
     
 
     noise = params[0]                   
-    covparams = params[1:ncovparams]   # Zulberti this terminology is confusing. One would think ncovparams is the last 
+    covparams = params[1:ncovparams]   # Zulberti this terminology is confusing. One would think ncovparams is the  
                                        # number of covparams, not the number of the last covparam. I suggest changing this. 
     meanparams = params[ncovparams:]
     
@@ -45,18 +53,21 @@ def _minfunc_prior( params, x, Z, covfunc, meanfunc,
     return logp + sum_prior             # Return the sume of the logs (log of the product)
 
 
-def mcmc(
-    xd, yd, 
-    covfunc, 
-    meanfunc, 
-    priors,
-    ncovparams,
-    mean_kwargs={},
-    GPclass=GPtideScipy
-    verbose=False,
-    nwalkers=200, nwarmup=200, niter=20, nprior=500,
-    gp_kwargs={},
-    parallel=False):
+def mcmc(   xd, 
+            yd, 
+            covfunc, 
+            meanfunc, 
+            priors,
+            ncovparams,
+            mean_kwargs={},
+            GPclass=GPtideScipy,
+            verbose=False,
+            nwalkers=200, 
+            nwarmup=200, 
+            niter=20, 
+            nprior=500,
+            gp_kwargs={},
+            parallel=False):
     """
     Main MCMC function
     """
@@ -106,8 +117,9 @@ def mcmc(
         
     
     samples = sampler.chain[:, :, :].reshape((-1, ndim))
-    
+    log_prob = sampler.get_log_prob()[:, :].reshape((-1, 1))
+
     # Output priors
     p0 = np.array([np.array([pp.rvs() for pp in priors]) for i in range(nprior)])
     
-    return samples, p0, sampler
+    return samples, log_prob, p0, sampler
