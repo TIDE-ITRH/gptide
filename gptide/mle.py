@@ -6,7 +6,7 @@ from scipy.optimize import minimize
 # Estimate parameters
 ##############
 def minfunc( params, x, Z, covfunc, meanfunc, 
-            ncovparams, verbose, mean_kwargs, GPclass, oi_kwargs,
+            ncovparams, verbose, mean_kwargs, GPclass, gp_kwargs,
            priors):
     
     if verbose:
@@ -26,7 +26,7 @@ def minfunc( params, x, Z, covfunc, meanfunc,
         
     
     myOI = GPclass(x, x, noise, covfunc, covparams, mean_func=meanfunc,
-                        mean_params=meanparams, mean_kwargs=mean_kwargs, **oi_kwargs)
+                        mean_params=meanparams, mean_kwargs=mean_kwargs, **gp_kwargs)
     nll = -myOI.log_marg_likelihood(Z)
     if verbose:
         print(nll)
@@ -53,7 +53,7 @@ def mle(
     """
 
     ncovparams = len(covparams_ic)+1
-    myargs = (xd,  yd,  covfunc, meanfunc, ncovparams, verbose, mean_kwargs, GPclass, oi_kwargs, priors)
+    myargs = (xd,  yd,  covfunc, meanfunc, ncovparams, verbose, mean_kwargs, GPclass, gp_kwargs, priors)
     myminfunc = minfunc
     
     params_ic = (noise_ic,)+covparams_ic+meanparams_ic
