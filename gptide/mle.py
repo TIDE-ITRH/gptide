@@ -5,15 +5,23 @@ from scipy.optimize import minimize
 ##############
 # Estimate parameters
 ##############
-def minfunc( params, x, Z, covfunc, meanfunc, 
-            ncovparams, verbose, mean_kwargs, GPclass, gp_kwargs,
-           priors):
+def minfunc( params, 
+             x, 
+             Z, 
+             covfunc, 
+             meanfunc, 
+             ncovparams, 
+             verbose, 
+             mean_kwargs, 
+             GPclass, 
+             gp_kwargs,
+             priors):
     
     if verbose:
         print(params)
 
-    noise = params[0]
-    covparams = params[1:ncovparams]
+    noise      = params[0]
+    covparams  = params[1:ncovparams]
     meanparams = params[ncovparams:]
     
     ## Add on the priors
@@ -34,20 +42,22 @@ def minfunc( params, x, Z, covfunc, meanfunc,
     return nll - sum_prior
 
 
-def mle(
-    xd, yd, 
-    covfunc, covparams_ic,
-    meanfunc, meanparams_ic,
-    noise_ic,
-    mean_kwargs={},
-    GPclass=GPtideScipy,
-    verbose=False,
-    priors=None,
-    method = 'L-BFGS-B',
-    bounds = None,
-    options = None,
-    callback = None,
-    gp_kwargs={}):
+def mle(xd, 
+        yd, 
+        covfunc, 
+        covparams_ic,
+        meanfunc, 
+        meanparams_ic,
+        noise_ic,
+        mean_kwargs={},
+        GPclass=GPtideScipy,
+        verbose=False,
+        priors=None,
+        method = 'L-BFGS-B',
+        bounds = None,
+        options = None,
+        callback = None,
+        gp_kwargs={}):
     """
     Optimise the GP kernel parameters by minimising the negative log marginal likelihood
     """
