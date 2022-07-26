@@ -17,4 +17,6 @@ dependencies:
       - nbsphinx
       - sphinx_rtd_theme
       - emcee
+      - corner
+      - arviz
 
