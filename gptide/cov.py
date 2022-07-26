@@ -64,7 +64,7 @@ def periodic(x, xpr, l, p):
     cff = -2/l2
     return np.exp(cff*sin2)
 
-def cosine(x,xpr,l):
+def cosine(x, xpr, l):
     """Cosine base function"""
     return np.cos(np.pi*np.abs(x-xpr)/(l*l))
 

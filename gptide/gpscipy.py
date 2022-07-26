@@ -137,7 +137,7 @@ class GPtideScipy(GPtide):
 
         return L, w_md
 
-    def _calc_err(self, diag=True):
+    def _calc_err(self, diag=True): # Zulberti - why not just do this with _calc_cov and do it on init
         """
         Compute the covariance of the conditional distribution
 
