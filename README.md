@@ -1,3 +1,4 @@
+<img title="logo" alt="Alt text" src="/docs/_static/goatgptide.jpg">
 # gptide
 Gaussian Process regression toolkit for Transformation of Infrastructure through Digitial Engineering applications.
 
@@ -5,7 +6,7 @@ Gaussian Process regression (also called *Optimal Interpolation* or *Kriging*) i
 
 Please see the [examples](https://gptide.readthedocs.io/en/latest/examples.html) for particular use cases.
 
-Note that there are many other Gaussian Process packages on the world wide web - this package is yet another one. The selling point of this package is that the object is fairlystraightforward and the kernel building is all done with functions, not abstract classes. The intention is to use this package as both a teaching and research tool.
+Note that there are many other Gaussian Process packages on the world wide web - this package is yet another one. The selling point of this package is that the object is fairly straightforward and the kernel building is all done with functions, not abstract classes. The intention is to use this package as both a teaching and research tool.
 
 ## Documentation
 
