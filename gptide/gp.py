@@ -21,7 +21,9 @@ class GPtide(object):
     
     
     def __init__(self, xd, xm, sd, cov_func, cov_params, **kwargs):
-
+        """
+        Initialise GP object and evaluate mean and covatiance functions. 
+        """
         self.__dict__.update(kwargs)
         
         assert xd.ndim==2

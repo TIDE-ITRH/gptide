@@ -83,6 +83,11 @@ def mle(xd,
     callback: callable, optional [None]
         see scipy.optimize.minimize
         
+    Returns
+    --------
+    res: OptimizeResult
+        Result of the scipy.optimize.minimize call
+
     """
 
     ncovparams = len(covparams_ic)+1
