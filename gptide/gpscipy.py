@@ -4,9 +4,7 @@ from scipy import linalg as la
 from .gp import GPtide
 
 class GPtideScipy(GPtide):
-    
-    def __init__(self, xd, xm, sd, cov_func, cov_params, **kwargs):
-        """
+    """
         Gaussian Process regression class
 
         Uses scipy to do the heavy lifting
@@ -37,6 +35,10 @@ class GPtideScipy(GPtide):
         mean_kwargs: dict
             kwargs passed to the mean function
 
+        """
+    def __init__(self, xd, xm, sd, cov_func, cov_params, **kwargs):
+        """
+        Initialise GP object and evaluate mean and covatiance functions. 
         """
         
         GPtide.__init__(self, xd, xm, sd, cov_func, cov_params, **kwargs)

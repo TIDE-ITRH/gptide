@@ -46,9 +46,9 @@ def mle(xd,
         yd, 
         covfunc, 
         covparams_ic,
-        meanfunc, 
-        meanparams_ic,
         noise_ic,
+        meanfunc=None, 
+        meanparams_ic=[],
         mean_kwargs={},
         GPclass=GPtideScipy,
         verbose=False,
@@ -59,14 +59,16 @@ def mle(xd,
         callback = None,
         gp_kwargs={}):
     """
-    Optimise the GP kernel parameters by minimising the negative log marginal likelihood
+    Main MLE function
+
+    Optimise the GP kernel parameters by minimising the negative log marginal likelihood/probability
     """
 
     ncovparams = len(covparams_ic)+1
     myargs = (xd,  yd,  covfunc, meanfunc, ncovparams, verbose, mean_kwargs, GPclass, gp_kwargs, priors)
     myminfunc = minfunc
     
-    params_ic = (noise_ic,)+covparams_ic+meanparams_ic
+    params_ic = [noise_ic,] + covparams_ic + meanparams_ic
     
     return minimize(myminfunc, params_ic,
              args=myargs,

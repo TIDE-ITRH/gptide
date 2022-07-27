@@ -21,7 +21,7 @@ class GPtide(object):
     
     
     def __init__(self, xd, xm, sd, cov_func, cov_params, **kwargs):
-        
+
         self.__dict__.update(kwargs)
         
         assert xd.ndim==2
@@ -54,12 +54,21 @@ class GPtide(object):
         self.L, self.w_md = self._calc_weights(self.Kdd, self.sd, self.Kmd)
         
     def prior(self, samples=1):
+        """
+        Placeholder
+        """
         raise NotImplementedError
     
     def conditional(self, yd, samples=1):
+        """
+        Placeholder
+        """
         raise NotImplementedError
         
     def log_marg_likelihood(self, yd):
+        """
+        Placeholder
+        """
         raise NotImplementedError
         
     def update_xm(self, xm):
@@ -70,13 +79,25 @@ class GPtide(object):
         self.Kmd = self.cov_func(self.xm, self.xd.T, self.cov_params, **self.mean_kwargs) 
         
     def __call__(self, yd):
+        """
+        Placeholder
+        """
         raise NotImplementedError
         
     def _calc_cov(self, cov_func, cov_params):
+        """
+        Placeholder
+        """
         raise NotImplementedError
     
     def _calc_weights(self, Kdd, sd, Kmd):
+        """
+        Placeholder
+        """
         raise NotImplementedError
         
     def _calc_err(self, diag=True):
+        """
+        Placeholder
+        """
         raise NotImplementedError
