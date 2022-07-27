@@ -1,5 +1,7 @@
 <img title="logo" alt="Alt text" src="/docs/_static/goatgptide.jpg">
+
 # gptide
+
 Gaussian Process regression toolkit for Transformation of Infrastructure through Digitial Engineering applications.
 
 Gaussian Process regression (also called *Optimal Interpolation* or *Kriging*) is useful for fitting a continuous surface to sparse observations, i.e. making predictions. Its main use in environmental sciences, like oceanography, is for spatio-temporal modelling. This package provides a fairly simple API for making predictions AND for estimating kernel hyper-parameters. The hyper-parameter estimation has two main functions: one for Bayesians, one for frequentists. You choose.
