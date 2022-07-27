@@ -1,6 +1,10 @@
 API
 ###
 
+.. toctree::
+    :maxdepth: 2
+
+
 Main Class
 ==========
 
