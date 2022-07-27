@@ -46,8 +46,6 @@ def mcmc(   xd,
     noise_priors: scipy.stats.rv_continuous object       
         Prior for I.I.D. noise
 
-    ncovparams: Zulberti - update this and redo everything
-
     Other Parameters
     ----------------
     meanfunc: function [None]
@@ -166,14 +164,10 @@ def _minfunc_prior( params,
                     gp_kwargs,
                     priors):
     """
+    Function to be maximised.
+    
     This is the log_prob_fn in emcee speak. Takes a vector in the parameter space, and any additional arguments in the 
     args kwarg of the emcee.EnsembleSampler
-
-    params:
-        A sequence of parameters, 
-            - The first is IID noise
-            - Then there are ncovparams-1 parameters for the covfunc
-            - The rest are for the meanfunc 
 
     """
     
