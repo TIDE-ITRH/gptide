@@ -2,7 +2,7 @@
 [![PyPI version](https://badge.fury.io/py/gptide.svg)](https://badge.fury.io/py/gptide)
 [![Downloads](https://pepy.tech/badge/gptide)](https://pepy.tech/project/gptide)
 
-<img width="700" height="300" title="logo" alt="Alt text" src="/docs/_static/goatgptide.jpg">
+<img width="500" height="300" title="logo" alt="Alt text" src="/docs/_static/goatgptide.jpg">
 
 
 # gptide
