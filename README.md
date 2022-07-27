@@ -1,5 +1,9 @@
 <img title="logo" alt="Alt text" src="/docs/_static/goatgptide.jpg">
 
+[![Documentation status](https://readthedocs.org/projects/gpjax/badge/?version=latest)](https://gptide.readthedocs.io/en/latest/?badge=latest)
+[![PyPI version](https://badge.fury.io/py/gptide.svg)](https://badge.fury.io/py/gptide)
+[![Downloads](https://pepy.tech/badge/gptide)](https://pepy.tech/project/gptide)
+
 # gptide
 
 Gaussian Process regression toolkit for Transformation of Infrastructure through Digitial Engineering applications.
