@@ -21,7 +21,9 @@ Documentation is available on  [read the docs](https://gptide.readthedocs.io/en/
 
 ## Installation
 
-Installation is currently directly through git
+### pip
+
+`pip install gptide` 
 
 ### To install a local development version
 
