@@ -14,6 +14,10 @@ def expquad_1d(x, xpr, params):
     eta, l = params
     return eta**2. * expquad(x, xpr, l)
 
+def matern12_1d(x, xpr, params):
+    eta, l = params
+    return eta**2. * matern12(x, xpr, l)
+
 def matern32_1d(x, xpr, params):
     eta, l = params
     return eta**2. * matern32(x, xpr, l)
@@ -51,7 +55,7 @@ def matern32(x,xpr,l):
     return (1 + fac2/l)*np.exp(-fac2/l)
 
 def matern12(x,xpr,l):
-    """Matern 3/2 base function"""
+    """Matern 1/2 base function"""
     fac1 = (x-xpr)*(x-xpr)
     return np.exp(-fac1/l)
 
@@ -68,8 +72,16 @@ def cosine(x, xpr, l):
     """Cosine base function"""
     return np.cos(np.pi*np.abs(x-xpr)/(l*l))
 
+def se(x, xpr, l):
+    return expquad(x, xpr, l)
+    """Exponential quadration base function/Squared exponential/RBF"""
+    
+def rbf(x, xpr, l):
+    return expquad(x, xpr, l)
+    """Exponential quadration base function/Squared exponential/RBF"""
+    
 def expquad(x, xpr, l):
-    """Exponential quadration base function"""
+    """Exponential quadration base function/Squared exponential/RBF"""
     return np.exp(-(x-xpr)*(x-xpr)/(2*l*l))
 
 def matern_general(dx, eta, nu, l):
