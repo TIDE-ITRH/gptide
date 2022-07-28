@@ -70,6 +70,10 @@ def periodic(x, xpr, l, p):
 
 def cosine(x, xpr, l):
     """Cosine base function"""
+    return np.cos(2*np.pi*np.abs(x-xpr)/l)
+
+def cosine_rw06(x, xpr, l):
+    """Cosine base function"""
     return np.cos(np.pi*np.abs(x-xpr)/(l*l))
 
 def se(x, xpr, l):
