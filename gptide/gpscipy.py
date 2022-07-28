@@ -139,16 +139,17 @@ class GPtideScipy(GPtide):
 
         return L, w_md
 
-    def _calc_err(self, diag=True): # Zulberti - why not just do this with _calc_cov and do it on init
+    def _calc_err(self, diag=True): 
         """
         Compute the covariance of the conditional distribution
 
         Used by .conditional
+
+        Not calculated with _calc_cov as it is not always needed. 
         """
 
         Kmm = self.cov_func(self.xm, self.xm.T, self.cov_params, **self.cov_kwargs)
-        Kdm = self.cov_func(self.xd, self.xm.T, self.cov_params, **self.cov_kwargs)
-        
+        Kdm = self.cov_func(self.xd, self.xm.T, self.cov_params, **self.cov_kwargs) # Zulberti - not necessary to calculate this. 
         
         v = la.cho_solve((self.L, True),  Kdm)
         
