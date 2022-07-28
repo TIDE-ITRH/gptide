@@ -1,6 +1,6 @@
 [![Documentation status](https://readthedocs.org/projects/gptide/badge/?version=latest)](https://gptide.readthedocs.io/en/latest/?badge=latest)
 [![PyPI version](https://badge.fury.io/py/gptide.svg)](https://badge.fury.io/py/gptide)
-[![Downloads](https://pepy.tech/badge/gptide)](https://pepy.tech/project/gptide)
+[![Downloads](https://static.pepy.tech/personalized-badge/gptide?period=total&units=international_system&left_color=black&right_color=orange&left_text=Downloads)](https://pepy.tech/project/gptide)
 
 <img width="500" height="300" title="logo" alt="Alt text" src="/docs/_static/gptide_thegoat.png">
 
