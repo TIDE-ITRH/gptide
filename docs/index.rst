@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-.. figure:: _static/goatgptide.jpg
+.. figure:: _static/gptide_thegoat.png
    :alt:
 
 gptide: a lightweight module for Gaussian Process regression
