@@ -1,6 +1,8 @@
 import numpy as np
 from scipy import linalg as la
 
+from numba import jit
+
 from .gp import GPtide
 
 class GPtideToeplitz(GPtide):
@@ -70,7 +72,8 @@ class GPtideToeplitz(GPtide):
         
         assert yd.shape[0] == self.N, ' first dimension in input data must equal '
         
-        alpha = la.solve_toeplitz(self.L, yd - self.mu_d)
+        #alpha = la.solve_toeplitz(self.L, yd - self.mu_d)
+        alpha = self.L.dot(yd - self.mu_d)
         
         return self.mu_m + self.Kmd.dot(alpha)
   
@@ -78,9 +81,11 @@ class GPtideToeplitz(GPtide):
     def log_marg_likelihood(self, yd):
         """Compute the log of the marginal likelihood"""
                 
-        _, logdet = modified_trench_helper(self.L)
+        #_, logdet = modified_trench_helper(self.L)
+        logdet = self.w_md
         
-        alpha = la.solve_toeplitz(self.L, yd - self.mu_d)
+        #alpha = la.solve_toeplitz(self.L, yd - self.mu_d)
+        alpha = self.L.dot(yd - self.mu_d)
         
         qdist = np.dot( (yd-self.mu_d).T, alpha)[0,0] # original
 
@@ -104,9 +109,12 @@ class GPtideToeplitz(GPtide):
     
     def _calc_weights(self, Kdd, sd, Kmd):
         """Store the Toeplitz matrix first columnn"""
-        L = Kdd[:,0]
-        L[0] += (sd**2+1e-7)
-        w_md = None
+        #L = Kdd[:,0]
+        #L[0] += (sd**2+1e-7)
+        #w_md = None
+        M = Kdd[:,0]
+        M[0] += (sd**2+1e-7)
+        L, w_md = toeplitz_inverse(M[:,None])
 
         return L, w_md
 
@@ -122,7 +130,8 @@ class GPtideToeplitz(GPtide):
         Kmm = self.cov_func(self.xm, self.xm.T, self.cov_params, **self.cov_kwargs)
         Kdm = self.cov_func(self.xd, self.xm.T, self.cov_params, **self.cov_kwargs) 
         
-        v = la.solve_toeplitz(self.L,  Kdm)
+        #v = la.solve_toeplitz(self.L,  Kdm)
+        v = self.L.dot(Kdm)
         
         V = Kmm - v.T.dot(Kdm)
         
@@ -143,7 +152,7 @@ We just use algs 1.2 and 1.3 to calculate the log-determinant
 Reference:
     Zhang, Y., Leithead, W. E., & Leith, D. J. (2005). Time-series Gaussian process regression based on Toeplitz computation of O (N 2) operations and O (N)-level storage. Decision and Control, 2005 and 2005 European Control Conference. CDC-ECC’05. 44th IEEE Conference on, 3711–3716.
 """
-
+@jit
 def toeplitz_inverse(m):
     """
     Computes a fast inverse of a Toeplitz matrix (Alg. 1.1) and
@@ -161,7 +170,7 @@ def toeplitz_inverse(m):
     c_inv[:, -1] = v
 
     for ii in range(1, int(np.floor((N-1)/2)+1)):
-        for jj in xrange(ii, N - ii):
+        for jj in range(ii, N - ii):
             c_inv[ii, jj] = (c_inv[ii-1, jj-1]
                              + (v[N-jj-1] * v[N-ii-1] - v[ii-1] * v[jj-1])
                              / v[-1])
@@ -171,7 +180,7 @@ def toeplitz_inverse(m):
 
     return c_inv, l
 
-
+@jit
 def modified_trench_helper(c):
     """
     The modified Trench algorithm (Alg. 1.2)
@@ -183,12 +192,14 @@ def modified_trench_helper(c):
     l = l + N * np.log(c[0])
 
     v = np.zeros(N)  # initialising
-    v[-1] = 1/((1 + wiggle.dot(z)) * c[0])
+    #v[-1] = 1/((1 + wiggle.dot(z)) * c[0])
+    v[-1] = 1/((1 + np.dot(wiggle, z)) * c[0])
+
     v[:-1] = v[-1] * z[::-1]
 
     return v, l
 
-
+@jit
 def modified_durbin(m, wiggle):
     """
     Modified Durbin algorithm
@@ -209,7 +220,8 @@ def modified_durbin(m, wiggle):
             z[0] = z[0] + alpha*z[0]
         else:
             # print alpha
-            alpha = - (wiggle[ii+1] + wiggle[ii::-1].dot(z[:ii+1])) / beta
+            #alpha = - (wiggle[ii+1] + wiggle[ii::-1].dot(z[:ii+1])) / beta
+            alpha = - (wiggle[ii+1] + np.dot(np.ascontiguousarray(wiggle[ii::-1]),z[:ii+1]) ) / beta
             z[:ii+1] = z[:ii+1] + alpha*z[ii::-1]
         z[ii+1] = alpha
 
