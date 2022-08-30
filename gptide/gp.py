@@ -76,7 +76,7 @@ class GPtide(object):
     def update_xm(self, xm):
         """Update the output locations and the covariance kernel"""
 
-        print('Updating xm')
+        # print('Updating xm')
 
         self.M, _ = xm.shape
 
@@ -85,7 +85,7 @@ class GPtide(object):
         self.xm = xm
         self.Kmd = self.cov_func(self.xm, self.xd.T, self.cov_params, **self.mean_kwargs) 
         
-        print('Updated xm')
+        # print('Updated xm')
 
     def __call__(self, yd):
         """
