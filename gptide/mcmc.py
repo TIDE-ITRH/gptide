@@ -22,7 +22,8 @@ def mcmc(   xd,
             niter=20, 
             nprior=500,
             parallel=False,
-            verbose=False):
+            verbose=False, 
+            progress=True):
     """
     Main MCMC function
 
@@ -121,12 +122,14 @@ def mcmc(   xd,
                                         priors),
                                 pool=pool)
 
-            print("Running burn-in...")
-            p0, _, _ = sampler.run_mcmc(p0, nwarmup, progress=True)
+            if progress:
+                print("Running burn-in...")
+            p0, _, _ = sampler.run_mcmc(p0, nwarmup, progress=progress)
             sampler.reset()
 
-            print("Running production...")
-            pos, prob, state = sampler.run_mcmc(p0, niter, progress=True)
+            if progress:
+                print("Running production...")
+            pos, prob, state = sampler.run_mcmc(p0, niter, progress=progress)
     else:
         sampler = emcee.EnsembleSampler(nwalkers, ndim, 
                                 _minfunc_prior, 
@@ -136,12 +139,14 @@ def mcmc(   xd,
                                         priors),
                                  )
 
-        print("Running burn-in...")
-        p0, _, _ = sampler.run_mcmc(p0, nwarmup, progress=True)
+        if progress:
+                print("Running burn-in...")
+        p0, _, _ = sampler.run_mcmc(p0, nwarmup, progress=progress)
         sampler.reset()
 
-        print("Running production...")
-        pos, prob, state = sampler.run_mcmc(p0, niter, progress=True)
+        if progress:
+                print("Running production...")
+        pos, prob, state = sampler.run_mcmc(p0, niter, progress=progress)
         
     
     samples = sampler.chain[:, :, :].reshape((-1, ndim))
