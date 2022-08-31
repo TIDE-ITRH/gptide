@@ -114,7 +114,8 @@ class GPtideScipy(GPtide):
                 
         logdet = 2*np.sum(np.log(np.diagonal(self.L)))
         
-        alpha = la.cho_solve((self.L, True), yd - self.mu_d)
+        alpha = la.cho_solve((self.L, True), yd - self.mu_d) 
+        # Zulberti - we're inverting this matrix
         
         qdist = np.dot( (yd-self.mu_d).T, alpha)[0,0] # original
 
@@ -141,17 +142,20 @@ class GPtideScipy(GPtide):
 
     def _calc_err(self, diag=True): 
         """
+        
         Compute the covariance of the conditional distribution
 
         Used by .conditional
 
-        Not calculated with _calc_cov as it is not always needed. 
+        Not calculated with _calc_cov as it is not always needed.
+
         """
 
         Kmm = self.cov_func(self.xm, self.xm.T, self.cov_params, **self.cov_kwargs)
         Kdm = self.cov_func(self.xd, self.xm.T, self.cov_params, **self.cov_kwargs) # Zulberti - not necessary to calculate this. 
         
-        v = la.cho_solve((self.L, True),  Kdm)
+        v = la.cho_solve((self.L, True),  Kdm) # Zulberti - why not solve against I and save the inverse?
+                                               #            Then we don't need to invert again for the log marg. 
         
         V = Kmm - v.T.dot(Kdm)
         
