@@ -1,6 +1,10 @@
 What's new
 ##########
 
+v0.4.0
+======
+Added a Jax class and Blackjax MCMC code
+
 v0.3.0
 ======
 Added a Toeplitz solver for evenly spaced 1D input/output problems

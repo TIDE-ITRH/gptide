@@ -8,7 +8,7 @@ class BinaryDistribution(Distribution):
         return False
 
 setup(name='gptide',
-    version='0.3.0',
+    version='0.4.0',
     url='https://github.com/TIDE-ITRH/gptide',
     description='Gaussian Process regression tools for oceanography and engineering',
     author='Lachlan Astfalck; Matt Rayson; Andrew Zulberti',
