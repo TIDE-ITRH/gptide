@@ -17,7 +17,7 @@ def mcmc(   xd,
             mean_kwargs={},
             GPclass=GPtideScipy,
             gp_kwargs={},
-            nwalkers=200, 
+            nwalkers=None, 
             nwarmup=200, 
             niter=20, 
             nprior=500,
@@ -64,8 +64,8 @@ def mcmc(   xd,
     gp_kwargs: dict
         Key word arguments for the GPclass initialisation
 
-    nwalkers: int
-        see emcee.EnsembleSampler
+    nwalkers: int or None
+        see emcee.EnsembleSampler. If None it will be 20 times the number of parameters. 
 
     nwarmup: int
         see emcee.EnsembleSampler
@@ -108,6 +108,9 @@ def mcmc(   xd,
     ncovparams = len(cov_priors)
 
     ndim = len(priors)
+
+    if nwalkers is None:
+        nwalkers = 20*ndim
 
     p0 = [np.array([pp.rvs() for pp in priors]) for i in range(nwalkers)]
     
