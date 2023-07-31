@@ -92,7 +92,7 @@ def expquad(x, xpr, l):
 def matern_general(dx, eta, nu, l):
     """General Matern base function, high frequency spectral slope is -(2\nu + 1)"""
     
-    cff1 = np.sqrt(2*nu)*dx/l
+    cff1 = np.sqrt(2*nu)*np.abs(dx)/l
     K = np.power(eta, 2.) * np.power(2., 1-nu) / gamma(nu)
     K *= np.power(cff1, nu)
     K *= K_nu(nu,cff1)
