@@ -45,21 +45,22 @@ def matern_general_1d(x, xpr, params):
 ### Raw functions (these can be used to build higher dimensional separable kernels)
 
 def matern52(x,xpr,l):
-    """Matern 5/2 base function"""
+    """Matern 5/2 base function, -6 high frequency spectral slop"""
     fac1 = 5*(x-xpr)*(x-xpr)
     fac2 = np.sqrt(fac1)
     return (1 + fac2/l + fac1/(3*l*l) )*np.exp(-fac2/l)
 
 def matern32(x,xpr,l):
-    """Matern 3/2 base function"""
+    """Matern 3/2 base function, -4 high frequency spectral slope"""
     fac1 = 3*(x-xpr)*(x-xpr)
     fac2 = np.sqrt(fac1)
     return (1 + fac2/l)*np.exp(-fac2/l)
 
 def matern12(x,xpr,l):
-    """Matern 1/2 base function"""
+    """Matern 1/2 base function, -2 high frequency spectral slope """
     fac1 = (x-xpr)*(x-xpr)
-    return np.exp(-fac1/l)
+    fac2 = np.sqrt(fac1)
+    return np.exp(-fac2/l)
 
 def periodic(x, xpr, l, p):
     """Periodic base function"""
@@ -91,9 +92,9 @@ def expquad(x, xpr, l):
     return np.exp(-(x-xpr)*(x-xpr)/(2*l*l))
 
 def matern_general(dx, eta, nu, l):
-    """General Matern base function"""
+    """General Matern base function, high frequency spectral slope is -(2\nu + 1)"""
     
-    cff1 = np.sqrt(2*nu)*dx/l
+    cff1 = np.sqrt(2*nu)*np.abs(dx)/l
     K = np.power(eta, 2.) * np.power(2., 1-nu) / gamma(nu)
     K *= np.power(cff1, nu)
     K *= K_nu(nu,cff1)
