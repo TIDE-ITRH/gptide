@@ -145,9 +145,16 @@ def mcmcjax(
     
     if nwarmup>0:
         seed = jax.random.PRNGKey(1234)
-        adapt = blackjax.window_adaptation(blackjax.nuts, logprob_fn, nwarmup, progress_bar=True)
-        last_state, kernel, _ = adapt.run(seed, initvals)
-        initial_state = nuts.init(last_state.position)
+        # Syntax has changed...
+        #adapt = blackjax.window_adaptation(blackjax.nuts, logprob_fn, nwarmup, progress_bar=True)
+        #last_state, kernel, _ = adapt.run(seed, initvals)
+        #initial_state = nuts.init(last_state.position)
+
+        # See https://blackjax-devs.github.io/blackjax/examples/quickstart.html
+        warmup = blackjax.window_adaptation(blackjax.nuts, logprob_fn, progress_bar=True)
+        rng_key, warmup_key, sample_key = jax.random.split(seed, 3)
+        (initial_state, parameters), _ = warmup.run(warmup_key, initvals, num_steps=nwarmup)
+        kernel = blackjax.nuts(logprob_fn, **parameters).step
 
     else:
         initial_state = nuts.init(initvals)
@@ -220,16 +227,16 @@ class JaxPrior(object):
         else:
             self.statsclass = getattr(jstats, distname)
         
-        if self.distname is 'truncnorm':
+        if self.distname == 'truncnorm':
             self._sp = truncnorm(*self.args)
         else:
             self._sp = getattr(ostats, distname)(*self.args)
         
     def logpdf(self, value):
-        if self.distname is 'invgamma':
+        if self.distname == 'invgamma':
             return invgamma_logpdf(value, *self.args)
         
-        elif self.distname is 'truncnorm':
+        elif self.distname == 'truncnorm':
             return truncnorm_logpdf(value, *self.args)
         else:
             return self.statsclass.logpdf(value, *self.args)
