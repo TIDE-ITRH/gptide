@@ -20,7 +20,7 @@ class GPtide(object):
     cov_args = ()
     
     
-    def __init__(self, xd, xm, sd, cov_func, cov_params, **kwargs):
+    def __init__(self, xd, xm, sd, cov_func, cov_params, sd_scale=None, **kwargs):
         """
         Initialise GP object and evaluate mean and covatiance functions. 
         """
@@ -38,6 +38,7 @@ class GPtide(object):
         self.xm = xm
         
         self.sd = sd
+        self.sd_scale = sd_scale
         self.cov_func = cov_func
         self.cov_params = cov_params
         

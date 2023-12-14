@@ -132,10 +132,34 @@ class GPtideScipy(GPtide):
         
         return Kmd, Kdd
     
+    @property
+    def _noise_mat(self):
+        """
+        A new property to allow variable marginal noise.
+        """
+
+        sd = np.array(self.sd)
+
+        if not sd.shape == (): # sd passed as a numeric value
+            raise(Exception)
+        
+        if self.sd_scale is None:
+            return sd*np.eye(self.N)
+        else:
+            return sd*np.diag(self.sd_scale)
+
+
     def _calc_weights(self, Kdd, sd, Kmd):
         """Calculate the cholesky factorization"""
         # Zulberti - private function shouldn't need these inputs or outputs
-        L = la.cholesky(Kdd+(sd**2+1e-7)*np.eye(self.N), lower=True)
+
+        # print('Im here')
+        # print(Kdd.shape)
+        # print(self._noise_mat.shape)
+        # print(self.N)
+        # print(self.P)
+
+        L = la.cholesky(Kdd + self._noise_mat + (1e-7)*np.eye(self.N), lower=True)
         w_md = None
 
         return L, w_md
@@ -172,7 +196,10 @@ class GPtideScipy(GPtide):
         # Predict the covariance
         Σ = self._calc_err(diag=False)
         Σ += 1e-7*np.eye(self.M)
-        Σ += (self.sd**2)*np.eye(self.M)
+         
+        if False: # This had to be removed as it only works for parametric noise. Posterior samples will be of the process, and free of noise. 
+            # Σ += (self.sd**2)*np.eye(self.M)
+            Σ += self._noise_mat   
         
         myrand = np.random.normal(size=(self.M,samples))
         L = la.cholesky(Σ, lower=True)
@@ -185,5 +212,3 @@ class GPtideScipy(GPtide):
         myrand = np.random.normal(size=(self.N,samples)) 
         
         return self.mu_d + self.L.dot(myrand) + noise*myrand
-
-    
