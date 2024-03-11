@@ -194,15 +194,12 @@ class GPtideJax(GPtide):
         return ymu + L.dot(myrand)
 
         
-        
     def _sample_prior(self, samples, noise=0.):
         
         self.key, sub_key = self._update_key(self.key)
 
         myrand = jrandom.normal(sub_key, shape=(self.N,samples)) 
         
-        
-
         return self.mu_d + self.L.dot(myrand) + noise*myrand
 
     def _update_key(self, old_key):

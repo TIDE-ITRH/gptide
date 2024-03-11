@@ -7,6 +7,11 @@ There is probably a better way to do this without cut and pasting...
 import jax.numpy as np
 from jax.scipy.special import gammaln
 
+def calc_dist(x, xpr, eps=1e-14):
+    dx2 = np.power(x-xpr, 2.)
+    dx2 = np.where(dx2 < eps, eps, dx2)
+    return np.sqrt(dx2)
+    
 ###
 # Special functions that are not in 
 def gamma(x):
@@ -54,7 +59,7 @@ def periodic_1d(x, xpr, params):
 
 def matern_general_1d(x, xpr, params):
     eta, nu, l = params
-    dx = np.sqrt((x-xpr)*(x-xpr))
+    dx = calc_dist(x, xpr)
     return matern_general(dx, eta, nu, l)
 
 ### Raw functions
