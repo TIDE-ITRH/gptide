@@ -18,6 +18,7 @@ class GPtide(object):
     
     cov_kwargs = {}
     cov_args = ()
+    jitter = 1e-7
     
     
     def __init__(self, xd, xm, sd, cov_func, cov_params, **kwargs):
