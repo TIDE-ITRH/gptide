@@ -18,6 +18,7 @@ class GPtide(object):
     
     cov_kwargs = {}
     cov_args = ()
+    jitter = 1e-7
     
     order_func = None
     order_params = ()
