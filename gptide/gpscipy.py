@@ -127,8 +127,8 @@ class GPtideScipy(GPtide):
     def _calc_cov(self, cov_func, cov_params):
         """Compute the covariance functions"""
         # Zulberti - private function shouldn't need these inputs or outputs
-        Kmd = cov_func(self.xm, self.xd.T, cov_params, **self.cov_kwargs)
-        Kdd = cov_func(self.xd, self.xd.T, cov_params, **self.cov_kwargs)
+        Kmd = cov_func(self.xm, self.xd, cov_params, **self.cov_kwargs)
+        Kdd = cov_func(self.xd, self.xd, cov_params, **self.cov_kwargs)
         
         return Kmd, Kdd
     

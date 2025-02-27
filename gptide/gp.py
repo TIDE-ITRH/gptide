@@ -19,6 +19,12 @@ class GPtide(object):
     cov_kwargs = {}
     cov_args = ()
     
+    order_func = None
+    order_params = ()
+    order_kwargs = {}
+    nn_kwargs = {}
+    nnum = 30
+        
     
     def __init__(self, xd, xm, sd, cov_func, cov_params, **kwargs):
         """
@@ -54,6 +60,7 @@ class GPtide(object):
         
         # Calculate the cholesky of Kdd for later use
         self.L, self.w_md = self._calc_weights(self.Kdd, self.sd, self.Kmd)
+            
         
     def prior(self, samples=1):
         """

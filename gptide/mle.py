@@ -19,8 +19,10 @@ def mle(xd,
         priors=None,
         method = 'L-BFGS-B',
         bounds = None,
+        tol = None,
         options = None,
         callback = None,
+        logparams = False,
         verbose=False):
 
     """
@@ -77,11 +79,17 @@ def mle(xd,
     bounds: sequence or Bounds, optional [None]
         see scipy.optimize.minimize
         
+    tol: float, optional [None]
+        see scipy.optimize.minimize
+        
     options: dict, optional [None]
         see scipy.optimize.minimize
         
     callback: callable, optional [None]
         see scipy.optimize.minimize
+        
+    logparams: bool [False]
+        If true the parameters are optimised in log space
         
     Returns
     --------
@@ -91,15 +99,21 @@ def mle(xd,
     """
 
     ncovparams = len(covparams_ic)+1
-    myargs = (xd,  yd,  covfunc, meanfunc, ncovparams, verbose, mean_kwargs, GPclass, gp_kwargs, priors)
+    myargs = (xd,  yd,  covfunc, meanfunc, ncovparams, verbose, mean_kwargs, GPclass, gp_kwargs, priors, logparams)
     myminfunc = _minfunc
     
-    params_ic = [noise_ic,] + covparams_ic + meanparams_ic
+    if logparams:
+        params_ic = np.log([noise_ic,] + covparams_ic + meanparams_ic)
+        if bounds is not None:
+            bounds = np.log(bounds)
+    else:
+        params_ic = [noise_ic,] + covparams_ic + meanparams_ic
     
     return minimize(myminfunc, params_ic,
              args=myargs,
                 method=method,
                 bounds=bounds,
+                tol=tol,
                 options=options,
                 callback=callback,
              ) 
@@ -114,12 +128,16 @@ def _minfunc( params,
              mean_kwargs, 
              GPclass, 
              gp_kwargs,
-             priors):
+             priors,
+             logparams):
     
     """
     Function to be minimised.
     """
 
+    if logparams:
+        params = np.exp(params)
+        
     if verbose:
         print(params)
 

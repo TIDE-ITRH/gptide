@@ -5,6 +5,7 @@ Covariance functions for optimal interpolation
 import numpy as np
 from scipy.special import kv as K_nu
 from scipy.special import gamma
+from numba import njit
 
 ####
 # 2D Covariance models (placeholder here for N-dimensional non separable kernels [matrix inputs])
@@ -106,6 +107,21 @@ def matern_general(dx, eta, nu, l):
 ### Matrix input kernels
 
 def matern32_matrix(d,l):
+    """
+    Non scaled [var 1] Matern 3/2 that takes a distance martrix as an input (i.e. not a vector of coordinates as above)
+    
+    Parameters
+    ==========
+    l: Matern length scale
+    d: distance matrix
+    """
+
+    fac1 = 3*d**2
+    fac2 = np.sqrt(fac1)
+    return (1 + fac2/l)*np.exp(-fac2/l)
+
+@njit(cache=True)
+def matern32_matrix_numba(d,l):
     """
     Non scaled [var 1] Matern 3/2 that takes a distance martrix as an input (i.e. not a vector of coordinates as above)
     
