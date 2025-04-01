@@ -197,3 +197,117 @@ def _minfunc_prior( params,
     logp = myGP.log_marg_likelihood(Z)  
     
     return logp + sum_prior             # Return the sume of the logs (log of the product)
+
+
+def mh(
+    xd, 
+    yd, 
+    covfunc, 
+    cov_priors,
+    noise_prior,
+    meanfunc=None,             
+    mean_priors=[],
+    mean_kwargs={},
+    steps=1/5,
+    GPclass=GPtideScipy,
+    gp_kwargs={},
+    nwarmup=200, 
+    niter=100,
+    #verbose=False,
+    #progress=True
+):
+    """ Metropolis Hasting sampler 
+    
+    do doc if relevant method
+    """
+    
+    n_mcmc = nwarmup+niter
+    
+    # number of parameters infered
+    priors  =  cov_priors + mean_priors + [noise_prior]
+    ncovparams = len(cov_priors)
+    ndim = len(priors)
+
+    # bounds and initializations - assumes truncnorm dist !
+    lowers = np.array([p.kwds["loc"]+p.a*p.kwds["scale"] for p in priors])
+    uppers = np.array([p.kwds["loc"]+p.b*p.kwds["scale"] for p in priors])
+    initialisations = np.array([(up+low)*.5 for up, low in zip(lowers, uppers)])
+
+    # step sizes 
+    if isinstance(steps, float):
+        step_sizes = np.array([ (up-low)*steps for low, up in zip(lowers, uppers)])
+
+    # setup objects
+    samples = [np.empty(n_mcmc) for _ in range(ndim)]
+    accept_samples = np.empty(n_mcmc)
+    lp_samples = np.empty(n_mcmc)
+    lp_samples[:] = np.nan
+    # init samples
+    for i, s in enumerate(samples):
+        s[0] =  initialisations[i]
+    accept_samples[0] = 0
+    
+    # run mcmc once
+    get_params = lambda p: (p[-1], p[:ncovparams],p[ncovparams:-1])
+    noise, covparams, meanparams = get_params(initialisations)
+    gp_current = GPclass(
+        xd, xd, 
+        noise, 
+        covfunc, covparams,
+        mean_func=meanfunc, mean_params=meanparams, mean_kwargs=mean_kwargs,
+        **gp_kwargs,
+    )
+
+    for i in np.arange(1, n_mcmc):
+        
+        proposed = np.array([
+            np.random.normal(s[i-1], step, 1)
+            for s, step in zip(samples, step_sizes)
+        ])
+
+        if ((proposed.T <= lowers) | (proposed.T >= uppers)).any():
+            for s in samples:
+                s[i] = s[i-1]
+            lp_samples[i] = lp_samples[i-1]
+            accept_samples[i] = 0
+            continue
+
+        if accept_samples[i-1] == True:
+            gp_current = gp_proposed
+
+        noise, covparams, meanparams = get_params(proposed)
+        gp_proposed = GPclass(
+            xd, xd, 
+            noise,
+            covfunc, covparams,
+            mean_func=meanfunc, mean_params=meanparams, mean_kwargs=mean_kwargs,
+            **gp_kwargs,
+        )
+
+        lp_current = gp_current.log_marg_likelihood(yd)
+        lp_proposed = gp_proposed.log_marg_likelihood(yd)
+
+        alpha = np.min([1, np.exp(lp_proposed - lp_current)])
+        u = np.random.uniform()
+
+        if alpha > u:
+            for s, p in zip(samples, proposed):
+                s[i] = p
+            accept_samples[i] = 1
+            lp_samples[i] = lp_proposed
+        else:
+            for s, p in zip(samples, proposed):
+                s[i] = s[i-1]
+            accept_samples[i] = 0
+            lp_samples[i] = lp_samples[i-1]
+
+    #samples = np.vstack([samples[-1]]+samples[:-1])
+    samples = np.vstack(samples)
+
+    attrs = dict(
+        lowers=lowers, uppers=uppers, 
+        init=initialisations,
+        steps=steps,
+    )
+
+    return samples, lp_samples, accept_samples, attrs
