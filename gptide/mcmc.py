@@ -5,7 +5,7 @@ MCMC parameter estimation using emcee
 import numpy as np
 import emcee
 from .gpscipy import GPtideScipy
-
+from tqdm import tqdm
 
 def mcmc(   xd, 
             yd, 
@@ -213,7 +213,7 @@ def mh(
     gp_kwargs={},
     nwarmup=200, 
     niter=100,
-    #verbose=False,
+    verbose=False,
     #progress=True
 ):
     """ Metropolis Hasting sampler 
@@ -248,7 +248,7 @@ def mh(
     accept_samples[0] = 0
     
     # run mcmc once
-    get_params = lambda p: (p[-1], p[:ncovparams],p[ncovparams:-1])
+    get_params = lambda p: (float(p[-1]), p[:ncovparams], p[ncovparams:-1])
     noise, covparams, meanparams = get_params(initialisations)
     gp_current = GPclass(
         xd, xd, 
@@ -258,12 +258,12 @@ def mh(
         **gp_kwargs,
     )
 
-    for i in np.arange(1, n_mcmc):
+    for i in tqdm(np.arange(1, n_mcmc), disable=(not verbose)):
         
         proposed = np.array([
             np.random.normal(s[i-1], step, 1)
             for s, step in zip(samples, step_sizes)
-        ])
+        ]).squeeze()
 
         if ((proposed.T <= lowers) | (proposed.T >= uppers)).any():
             for s in samples:
