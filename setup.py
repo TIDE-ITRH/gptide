@@ -8,11 +8,11 @@ class BinaryDistribution(Distribution):
         return False
 
 setup(name='gptide',
-    version='0.3.0',
+    version='0.3.1',
     url='https://github.com/TIDE-ITRH/gptide',
     description='Gaussian Process regression tools for oceanography and engineering',
     author='Lachlan Astfalck; Matt Rayson; Andrew Zulberti',
-    author_email='lachlan.astfalck@uwa.edu.au',
+    author_email='andrew.zulberti@uwa.edu.au',
     packages=find_packages(),
     install_requires=['numpy', 'matplotlib', 'scipy', 'xarray','emcee'],
     license='MIT',

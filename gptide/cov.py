@@ -6,9 +6,11 @@ import numpy as np
 from scipy.special import kv as K_nu
 from scipy.special import gamma
 
+####
+# 2D Covariance models (placeholder here for N-dimensional non separable kernels [matrix inputs])
 
 ####
-# 1D Covariance models (these are used as building blocks for 2d/3d functions)
+# 1D Covariance models (these are used as building blocks for separable 2d/3d functions)
 
 def expquad_1d(x, xpr, params):
     eta, l = params
@@ -40,7 +42,7 @@ def matern_general_1d(x, xpr, params):
     dx = np.sqrt((x-xpr)*(x-xpr))
     return matern_general(dx, eta, nu, l)
 
-### Raw functions (these can be used to build higher dimensional kernels)
+### Raw functions (these can be used to build higher dimensional separable kernels)
 
 def matern52(x,xpr,l):
     """Matern 5/2 base function, -6 high frequency spectral slop"""
@@ -100,6 +102,22 @@ def matern_general(dx, eta, nu, l):
     K[np.isnan(K)] = np.power(eta, 2.)
     
     return K
+
+### Matrix input kernels
+
+def matern32_matrix(d,l):
+    """
+    Non scaled [var 1] Matern 3/2 that takes a distance martrix as an input (i.e. not a vector of coordinates as above)
+    
+    Parameters
+    ==========
+    l: Matern length scale
+    d: distance matrix
+    """
+
+    fac1 = 3*d**2
+    fac2 = np.sqrt(fac1)
+    return (1 + fac2/l)*np.exp(-fac2/l)
 
 ### Spectral estimation routines
 def matern_spectra(f, eta, nu, l, n=1):

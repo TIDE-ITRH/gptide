@@ -67,7 +67,7 @@ class GPtideScipy(GPtide):
         
         return self.mu_m + self.Kmd.dot(alpha)
     
-    def prior(self, samples=1, noise=0.):
+    def prior(self, samples=1):
         """
         Sample from the prior distribution
 
@@ -85,7 +85,7 @@ class GPtideScipy(GPtide):
              
         """
 
-        return self._sample_prior(samples, noise=noise)
+        return self._sample_prior(samples)
     
     def conditional(self, yd, samples=1):
         """
@@ -107,7 +107,7 @@ class GPtideScipy(GPtide):
 
         """
 
-        return self._sample_posterior(yd, samples)
+        return self._sample_conditional(yd, samples)
     
     def log_marg_likelihood(self, yd):
         """Compute the log of the marginal likelihood"""
@@ -135,12 +135,12 @@ class GPtideScipy(GPtide):
     def _calc_weights(self, Kdd, sd, Kmd):
         """Calculate the cholesky factorization"""
         # Zulberti - private function shouldn't need these inputs or outputs
-        L = la.cholesky(Kdd+(sd**2+1e-7)*np.eye(self.N), lower=True)
+        L = la.cholesky(Kdd+(sd**2+self.jitter)*np.eye(self.N), lower=True)
         w_md = None
 
         return L, w_md
 
-    def _calc_err(self, diag=True): 
+    def _calc_conditional_cov(self, diag=True): 
         """
         
         Compute the covariance of the conditional distribution
@@ -152,27 +152,29 @@ class GPtideScipy(GPtide):
         """
 
         Kmm = self.cov_func(self.xm, self.xm.T, self.cov_params, **self.cov_kwargs)
-        Kdm = self.cov_func(self.xd, self.xm.T, self.cov_params, **self.cov_kwargs) # Zulberti - not necessary to calculate this. 
+        #Kdm = self.cov_func(self.xd, self.xm.T, self.cov_params, **self.cov_kwargs) # Zulberti - not necessary to 
+        #calculate this. 
+        Kdm = self.Kmd.T
         
-        v = la.cho_solve((self.L, True),  Kdm) # Zulberti - why not solve against I and save the inverse?
-                                               #            Then we don't need to invert again for the log marg. 
-        
-        V = Kmm - v.T.dot(Kdm)
+        #v = la.cho_solve((self.L, True),  Kdm) # Zulberti - why not solve against I and save the inverse?
+        #                                       #            Then we don't need to invert again for the log marg.
+        #Σ = Kmm - v.T.dot(Kdm)
+        v = la.cho_solve((self.L, True),  Kdm) 
+        Σ = Kmm - self.Kmd.dot(v)
         
         if diag:
-            return np.diag(V)
+            return np.diag(Σ)
         else:
-            return V
+            return Σ
             
-    def _sample_posterior(self, yd, samples):
+    def _sample_conditional(self, yd, samples):
         
         # Predict the mean
         ymu = self.__call__(yd)
 
         # Predict the covariance
-        Σ = self._calc_err(diag=False)
-        Σ += 1e-7*np.eye(self.M)
-        Σ += (self.sd**2)*np.eye(self.M)
+        Σ = self._calc_conditional_cov(diag=False)
+        Σ += self.jitter*np.eye(self.M)
         
         myrand = np.random.normal(size=(self.M,samples))
         L = la.cholesky(Σ, lower=True)
@@ -180,10 +182,10 @@ class GPtideScipy(GPtide):
         return ymu + L.dot(myrand)
         
         
-    def _sample_prior(self, samples, noise=0.):
+    def _sample_prior(self, samples):
         
         myrand = np.random.normal(size=(self.N,samples)) 
         
-        return self.mu_d + self.L.dot(myrand) + noise*myrand
+        return self.mu_d + self.L.dot(myrand) 
 
     
