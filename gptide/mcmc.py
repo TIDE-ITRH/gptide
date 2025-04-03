@@ -82,6 +82,9 @@ def mcmc(   xd,
     verbose: bool [False]
         Set to true for more output
 
+    progress: bool [False]
+        Show progress of sampling
+        
     Returns
     --------
     samples:
@@ -211,16 +214,75 @@ def mh(
     steps=1/5,
     GPclass=GPtideScipy,
     gp_kwargs={},
-    nwarmup=200, 
+    nwarmup=100, 
     niter=100,
-    verbose=False,
-    #progress=True
+    progress=True
 ):
-    """ Metropolis Hasting sampler 
+    """ Metropolis Hasting (MH) sampler 
+
+    Parameters
+    ----------
+    xd: numpy.ndarray [N, D]
+        Input data locations / predictor variable(s)
+
+    yd: numpy.ndarray [N,1]
+        Observed data
+
+    covfunc: function
+        Covariance function
+
+    cov_priors: list of scipy.stats.rv_continuous objects
+        List containing prior probability distribution for each parameter of the covfunc
+
+    noise_priors: scipy.stats.rv_continuous object       
+        Prior for I.I.D. noise    
+
+    Other Parameters
+    ----------------
+    meanfunc: function [None]
+        Mean function 
+
+    mean_priors: list of scipy.stats.rv_continuous objects
+        List containing prior probability distribution for each parameter of the meanfunc
+
+    mean_kwargs: dict
+        Key word arguments for the mean function
+
+    steps: float or list [1/5]
+        Steps of the MH samping. If float, step for infered parameter i is (up-low)*step where 
+        up and low are the lower and upper bounds of parameter
+
+    GPclass: gptide.gp.GPtide class [GPtideScipy]
+        The GP class used to estimate the log marginal likelihood
+
+    gp_kwargs: dict
+        Key word arguments for the GPclass initialisation
+
+    nwarmup: int
+        number of warmup steps (current implementation only augments niter)
     
-    do doc if relevant method
+    niter: int
+        see emcee.EnsembleSampler.run_mcmc
+
+    progress: bool [False]
+        Show progress of sampling
+
+    Returns
+    --------
+    samples: nd.array
+        MCMC chains including burn in
+
+    log_prob: nd.array
+        Log posterior probability for each sample in the MCMC chain including burn in
+
+    accept_samples: nd.array
+        Samples from the prior distributions
+    
+    attrs: dict
+        Dict of inference parameter configuration
+
     """
-    
+        
     n_mcmc = nwarmup+niter
     
     # number of parameters infered
@@ -258,7 +320,7 @@ def mh(
         **gp_kwargs,
     )
 
-    for i in tqdm(np.arange(1, n_mcmc), disable=(not verbose)):
+    for i in tqdm(np.arange(1, n_mcmc), disable=(not progress)):
         
         proposed = np.array([
             np.random.normal(s[i-1], step, 1)
