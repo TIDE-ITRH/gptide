@@ -1,10 +1,10 @@
 [build-system]
-requires = ["setuptools>=77.0.0"]
+requires = ["setuptools>=77.0.0", "setuptools_scm>=8"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "gptide"
-version = "0.3.1"
+dynamic = ["version"]
 description = "Gaussian Process regression tools for oceanography and engineering."
 readme = "README.md"
 requires-python = ">=3.8"
@@ -33,3 +33,5 @@ Changelog = "https://github.com/TIDE-ITRH/gptide/releases"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools_scm]
