@@ -8,6 +8,10 @@ def truncnorm(mu, sigma, a = 0, b = 1e12):
     lower, upper = (a - mu) / sigma, (b - mu) / sigma
     return stats.truncnorm(
         lower, upper, loc=mu, scale=sigma)
+
     
 def uniform(a, b):
     return stats.uniform(a, b)
+
+def lognorm(mu, sigma):
+    return stats.lognorm(s=sigma, scale=mu)

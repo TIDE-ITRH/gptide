@@ -3,11 +3,11 @@ MCMC parameter estimation using emcee
 """
 
 import numpy as np
-import emcee as em
+import emcee
 from .gpscipy import GPtideScipy
-from tqdm import tqdm
 
-def emcee(   xd, 
+
+def mcmc(   xd, 
             yd, 
             covfunc, 
             cov_priors,
@@ -82,9 +82,6 @@ def emcee(   xd,
     verbose: bool [False]
         Set to true for more output
 
-    progress: bool [False]
-        Show progress of sampling
-        
     Returns
     --------
     samples:
@@ -120,7 +117,7 @@ def emcee(   xd,
     if parallel:
         with Pool() as pool:
 
-            sampler = em.EnsembleSampler(nwalkers, ndim, 
+            sampler = emcee.EnsembleSampler(nwalkers, ndim, 
                                 _minfunc_prior, 
                                 args=(xd, yd, covfunc, meanfunc, 
                                         ncovparams, verbose, mean_kwargs, 
@@ -137,7 +134,7 @@ def emcee(   xd,
                 print("Running production...")
             pos, prob, state = sampler.run_mcmc(p0, niter, progress=progress)
     else:
-        sampler = em.EnsembleSampler(nwalkers, ndim, 
+        sampler = emcee.EnsembleSampler(nwalkers, ndim, 
                                 _minfunc_prior, 
                                 args=(xd, yd, covfunc, meanfunc, 
                                         ncovparams, verbose, mean_kwargs, 
