@@ -1,5 +1,35 @@
 [build-system]
-requires = ["setuptools>=61.0"]
+requires = ["setuptools>=77.0.0"]
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools_scm]
+[project]
+name = "gptide"
+version = "0.3.1"
+description = "Gaussian Process regression tools for oceanography and engineering."
+readme = "README.md"
+requires-python = ">=3.8"
+license = "MIT"
+authors = [
+    { name = "Lachlan Astfalck", email = "lachlan.astfalck@uwa.edu.au" },
+    { name = "Matt Rayson", email = "Matt.Rayson@uwa.edu.au" },
+    { name = "Andrew Zulberti", email = "andrew.zulberti@uwa.edu.au" },
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Intended Audience :: Developers",
+]
+dependencies = [
+    "numpy",
+    "scipy",
+    "xarray",
+    "matplotlib",
+    "emcee",
+]
+
+[project.urls]
+Homepage = "https://github.com/TIDE-ITRH/gptide"
+"Bug Tracker" = "https://github.com/TIDE-ITRH/gptide/issues"
+Changelog = "https://github.com/TIDE-ITRH/gptide/releases"
+
+[tool.setuptools.packages.find]
+where = ["src"]

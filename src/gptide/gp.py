@@ -83,7 +83,7 @@ class GPtide(object):
         self.M = self.M*self.P
         
         self.xm = xm
-        self.Kmd = self.cov_func(self.xm, self.xd.T, self.cov_params, **self.mean_kwargs) 
+        self.Kmd = self.cov_func(self.xm, self.xd.T, self.cov_params, **self.cov_kwargs)
         
         # print('Updated xm')
 
