@@ -19,7 +19,6 @@ def mle(xd,
         priors=None,
         method = 'L-BFGS-B',
         bounds = None,
-        tol = None,
         options = None,
         callback = None,
         verbose=False):
@@ -76,9 +75,6 @@ def mle(xd,
         see scipy.optimize.minimize
 
     bounds: sequence or Bounds, optional [None]
-        see scipy.optimize.minimize  
-        
-    tol: float, optional [None]
         see scipy.optimize.minimize
         
     options: dict, optional [None]
@@ -104,7 +100,6 @@ def mle(xd,
              args=myargs,
                 method=method,
                 bounds=bounds,
-                tol=tol,
                 options=options,
                 callback=callback,
              ) 
