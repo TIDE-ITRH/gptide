@@ -38,4 +38,15 @@ Documentation is available on  [read the docs](https://gptide.readthedocs.io/en/
 
 
 
+## Contributing
+
+Standard workflow for collaborators, branch → PR → review → merge → release:
+
+1. **Branch** off `main` for your change: `git checkout -b <short-description>`.
+2. **Edit and commit** on that branch.
+3. **Open a PR** back into `main` (`gh pr create --fill`). This triggers the test suite (`.github/workflows/tests.yml`) across Python 3.10-3.12.
+4. **Review**: get at least one review before merging -- from a collaborator, or an AI review pass (e.g. Claude Code's `/code-review`) if a human reviewer isn't available that day. 
+5. **Merge** once CI is green and the PR is approved (squash merge keeps history clean, but a regular merge is fine too).
+6. **Tag** new versions after merge, e.g., `git tag vX.Y.Z` and `git push origin vX.Y.Z`. Tags don't automatically publish so we can tag updates for collaborator records. 
+7. **Release** -- only when the change is worth shipping to users, not on every merge: create a GitHub Release from `main` (`gh release create vX.Y.Z`, following [semantic versioning](https://semver.org/)). The version is derived automatically from the tag via `setuptools_scm`, so there's no manual version bump. Publishing a release triggers `.github/workflows/publish.yml`, which re-runs the tests and then publishes to PyPI via trusted publishing.
 
