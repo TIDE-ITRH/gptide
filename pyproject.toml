@@ -24,7 +24,14 @@ dependencies = [
     "xarray",
     "matplotlib",
     "emcee",
+    "tqdm",
 ]
+
+[project.optional-dependencies]
+# CPU adaptor for the pair form kernels (gptide.cov_pair.as_base_cov)
+numba = ["numba"]
+# GPU solver (GPtideCUDA). Also needs a CUDA 12 toolkit/runtime, e.g. `module load cuda/12.6.3`
+cuda = ["numba", "numba-cuda", "cupy-cuda12x"]
 
 [project.urls]
 Homepage = "https://github.com/TIDE-ITRH/gptide"

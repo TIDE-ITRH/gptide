@@ -91,7 +91,10 @@ def mle(xd,
     """
 
     ncovparams = len(covparams_ic)+1
-    myargs = (xd,  yd,  covfunc, meanfunc, ncovparams, verbose, mean_kwargs, GPclass, gp_kwargs, priors)
+    # One GP object is created on the first call and then updated with
+    # `update_params` for every subsequent likelihood evaluation.
+    gp_cache = {}
+    myargs = (xd,  yd,  covfunc, meanfunc, ncovparams, verbose, mean_kwargs, GPclass, gp_kwargs, priors, gp_cache)
     myminfunc = _minfunc
     
     params_ic = [noise_ic,] + covparams_ic + meanparams_ic
@@ -114,7 +117,8 @@ def _minfunc( params,
              mean_kwargs, 
              GPclass, 
              gp_kwargs,
-             priors):
+             priors,
+             gp_cache=None):
     
     """
     Function to be minimised.
@@ -135,11 +139,32 @@ def _minfunc( params,
             return 1e25
         sum_prior = np.sum(log_prior)
         
-    myOI = GPclass(x, x, noise, covfunc, covparams, mean_func=meanfunc,
-                        mean_params=meanparams, mean_kwargs=mean_kwargs, **gp_kwargs)
+    myOI = _get_gp(gp_cache, GPclass, x, noise, covfunc, covparams, meanfunc,
+                   meanparams, mean_kwargs, gp_kwargs)
     nll = -myOI.log_marg_likelihood(Z)
     if verbose:
         print(nll)
     
     return nll - sum_prior
 
+
+
+def _get_gp(gp_cache, GPclass, x, noise, covfunc, covparams, meanfunc, meanparams, mean_kwargs, gp_kwargs):
+    """
+    Return a GP object for the given parameters.
+
+    If `gp_cache` (a dict) already holds a GP object it is updated in place with
+    `update_params`, otherwise a new one is created (and stored in `gp_cache`).
+    Passing `gp_cache=None` always creates a new object.
+    """
+    gp = None if gp_cache is None else gp_cache.get('gp')
+
+    if gp is None:
+        gp = GPclass(x, x, noise, covfunc, covparams, mean_func=meanfunc,
+                     mean_params=meanparams, mean_kwargs=mean_kwargs, **gp_kwargs)
+        if gp_cache is not None:
+            gp_cache['gp'] = gp
+    else:
+        gp.update_params(cov_params=covparams, sd=noise, mean_params=meanparams)
+
+    return gp

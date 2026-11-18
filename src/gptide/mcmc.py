@@ -5,6 +5,7 @@ MCMC parameter estimation using emcee
 import numpy as np
 import emcee
 from .gpscipy import GPtideScipy
+from .mle import _get_gp
 from tqdm import tqdm
 
 def mcmc(   xd, 
@@ -139,7 +140,7 @@ def mcmc(   xd,
                                 args=(xd, yd, covfunc, meanfunc, 
                                         ncovparams, verbose, mean_kwargs, 
                                         GPclass, gp_kwargs,
-                                        priors),
+                                        priors, {}),   # {} = GP cache, reused via update_params
                                  )
 
         if progress:
@@ -170,7 +171,8 @@ def _minfunc_prior( params,
                     mean_kwargs, 
                     GPclass, 
                     gp_kwargs,
-                    priors):
+                    priors,
+                    gp_cache=None):
     """
     Function to be maximised.
     
@@ -191,8 +193,8 @@ def _minfunc_prior( params,
     sum_prior = np.sum(log_prior)
     #sum_prior = 0.
     
-    myGP = GPclass(x, x, noise, covfunc, covparams, mean_func=meanfunc,
-                        mean_params=meanparams, mean_kwargs=mean_kwargs, **gp_kwargs) # Zulberti - this is initialised on every iteration. Suspect significant gains by just updating params. 
+    myGP = _get_gp(gp_cache, GPclass, x, noise, covfunc, covparams, meanfunc,
+                   meanparams, mean_kwargs, gp_kwargs)
     
     logp = myGP.log_marg_likelihood(Z)  
     
