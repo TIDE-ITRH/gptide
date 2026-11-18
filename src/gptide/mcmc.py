@@ -5,7 +5,7 @@ MCMC parameter estimation using emcee
 import numpy as np
 import emcee
 from .gpscipy import GPtideScipy
-
+from tqdm import tqdm
 
 def mcmc(   xd, 
             yd, 
