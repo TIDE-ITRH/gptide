@@ -184,6 +184,7 @@ class GPtideScipy(GPtide):
         
         myrand = np.random.normal(size=(self.N,samples)) 
         
-        return self.mu_d + self.L.dot(myrand) + noise*myrand
+        # The noise is independent of the draw used for the correlated part
+        return self.mu_d + self.L.dot(myrand) + noise*np.random.normal(size=(self.N,samples))
 
     

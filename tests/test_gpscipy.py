@@ -82,3 +82,20 @@ def test_update_xm_uses_cov_kwargs_not_mean_kwargs():
 
     expected = scaled_matern32_1d(xm_new, xd.T, (1.0, 2.0), scale=2.0)
     np.testing.assert_allclose(gp.Kmd, expected)
+
+
+def test_prior_noise_is_independent_of_the_correlated_part():
+    # Var[sample] should be K + noise^2 I. When the noise reused the draw
+    # of the correlated part it was K + 2*noise*L + noise^2 I.
+    np.random.seed(0)
+    xd = np.linspace(0, 10, 6).reshape(-1, 1)
+    sd = 1e-4
+    gp = GPtideScipy(xd, xd, sd, matern32_1d, (1.0, 2.0))
+
+    noise = 1.0
+    z = gp.prior(samples=40000, noise=noise)
+
+    expected_diag = np.diag(gp.Kdd) + sd**2 + 1e-7 + noise**2
+    np.testing.assert_allclose(np.var(z, axis=1), expected_diag, atol=0.06)
+    # off diagonal covariance is not inflated by the noise
+    np.testing.assert_allclose(np.cov(z)[0, 1], gp.Kdd[0, 1], atol=0.06)

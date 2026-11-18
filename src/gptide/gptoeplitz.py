@@ -92,12 +92,10 @@ class GPtideToeplitz(GPtide):
     def _calc_cov(self, cov_func, cov_params):
         """Compute the covariance functions
         
-        TODO: should just calculate the first row
-        
+        Kdd is Toeplitz so only its first column is calculated. Kmd is the full [M, N]
+        matrix (it is not Toeplitz in general).
         """
-        #Kmd = cov_func(self.xm, self.xd.T, cov_params, **self.cov_kwargs)
-        #Kdd = cov_func(self.xd, self.xd.T, cov_params, **self.cov_kwargs)
-        Kmd = cov_func(self.xm, self.xd[0,...], cov_params, **self.cov_kwargs).T
+        Kmd = cov_func(self.xm, self.xd.T, cov_params, **self.cov_kwargs)
         Kdd = cov_func(self.xd, self.xd[0,...], cov_params, **self.cov_kwargs)
         
         return Kmd, Kdd

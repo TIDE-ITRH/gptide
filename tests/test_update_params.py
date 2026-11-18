@@ -12,8 +12,7 @@ def _mean(x, params):
 @pytest.mark.parametrize("GPclass", [GPtideScipy, GPtideToeplitz])
 def test_update_params_matches_fresh_object(GPclass):
     xd = np.linspace(0, 10, 40).reshape(-1, 1)
-    # GPtideToeplitz builds Kmd incorrectly when xm != xd (pre-existing), so use xm = xd
-    xm = xd if GPclass is GPtideToeplitz else np.linspace(0, 10, 15).reshape(-1, 1)
+    xm = np.linspace(0, 10, 15).reshape(-1, 1)
     yd = np.sin(xd)
 
     gp = GPclass(xd, xm, 0.1, matern32_1d, (1.0, 2.0))
